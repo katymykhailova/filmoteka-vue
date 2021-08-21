@@ -33,8 +33,8 @@
   </section>
   <!-- <HelloWorld /> -->
   <Paginator
-    :first="offset"
-    :rows="1"
+    v-model:first="first"
+    :rows="20"
     :totalRecords="totalRecords"
     @page="onPage($event)"
   ></Paginator>
@@ -61,7 +61,7 @@ export default {
       movies: [],
       totalRecords: 0,
       currentPage: 1,
-      offset: 0,
+      first: 0,
     };
   },
   created: async function () {
@@ -83,14 +83,14 @@ export default {
     },
     onSeach() {
       this.fetchMoviesSearch();
-      this.offset = 0;
+      this.first = 0;
     },
     async fetchPopularMovies() {
       try {
         const trendinMoviesData = await fetchTrendingMovies(this.currentPage);
         const trendinMovies = await trendinMoviesData.results;
         this.movies = await fetchNormalizer(trendinMovies);
-        this.totalRecords = trendinMoviesData.total_pages;
+        this.totalRecords = trendinMoviesData.total_results;
       } catch (error) {
         console.log("Что-то пошло не так");
       }
@@ -103,7 +103,7 @@ export default {
         );
         const popularMovies = await popularMoviesData.results;
         this.movies = await fetchNormalizer(popularMovies);
-        this.totalRecords = popularMoviesData.total_pages;
+        this.totalRecords = popularMoviesData.total_results;
       } catch (error) {
         console.log("Что-то пошло не так");
       }
