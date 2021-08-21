@@ -88,12 +88,11 @@ export default {
     return {
       searchQuery: '',
       movies: [],
-
+      toWatchArray: [],
       totalRecords: 0,
       currentPage: 1,
       first: 0,
       view: 'home',
-      toWatchArray: [],
     };
   },
   created: async function () {
@@ -103,44 +102,25 @@ export default {
   methods: {
     onNavClick(view) {
       this.view = view;
-      switch (view) {
-        case 'home':
-          this.fetchPopularMovies();
-          break;
-        case 'movies':
-          this.movies = [];
-          break;
-        case 'library':
-          this.movies = this.toWatchArray;
-          this.totalRecords = this.toWatchArray.length;
-          break;
-
-        default:
-        // инструкции;
-      }
     },
 
     onPage(event) {
       this.currentPage = event.page + 1;
-      if (this.searchQuery !== '') {
-        this.fetchMoviesSearch();
-      } else {
-        this.fetchPopularMovies();
-      }
 
       //event.page: New page number
       //event.first: Index of first record
       //event.rows: Number of rows to display in new page
       //event.pageCount: Total number of pages
     },
+
     onAddWatched(movie) {
       this.toWatchArray.push(movie);
-      localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
     },
+
     onSeach() {
       this.fetchMoviesSearch();
-      this.first = 0;
     },
+
     async fetchPopularMovies() {
       try {
         const trendinMoviesData = await fetchTrendingMovies(this.currentPage);
@@ -151,6 +131,7 @@ export default {
         console.log('Что-то пошло не так');
       }
     },
+
     async fetchMoviesSearch() {
       try {
         const popularMoviesData = await fetchMoviesSearchQuery(
@@ -163,6 +144,43 @@ export default {
       } catch (error) {
         console.log('Что-то пошло не так');
       }
+    },
+  },
+
+  watch: {
+    view() {
+      this.first = 0;
+      switch (this.view) {
+        case 'home':
+          this.fetchPopularMovies();
+          break;
+        case 'movies':
+          this.movies = [];
+          break;
+        case 'library':
+          this.movies = this.toWatchArray;
+          this.totalRecords = this.toWatchArray.length;
+          break;
+
+        default:
+          this.fetchPopularMovies();
+      }
+    },
+
+    currentPage() {
+      if (this.view == 'movies') {
+        this.fetchMoviesSearch();
+      } else {
+        this.fetchPopularMovies();
+      }
+    },
+
+    toWatchArray() {
+      localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
+    },
+
+    searchQuery() {
+      this.first = 0;
     },
   },
 };
