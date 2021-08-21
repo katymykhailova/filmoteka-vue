@@ -6,7 +6,7 @@
     </nav>
   </header>
   <section>
-    <form class="search-form" @submit.prevent="fetchMovies">
+    <form class="search-form" @submit.prevent="onSeach">
       <button class="search-form-button" type="submit">
         <lable class="search-form-lable">Search</lable>
       </button>
@@ -31,20 +31,18 @@
       </li>
     </ul>
   </section>
-  <HelloWorld />
-  <!-- <paginate
-    :page-count="20"
-    :click-handler="functionName"
-    :prev-text="'Prev'"
-    :next-text="'Next'"
-    :container-class="'className'"
-  >
-  </paginate> -->
+  <!-- <HelloWorld /> -->
+  <Paginator
+    :first="offset"
+    :rows="1"
+    :totalRecords="totalRecords"
+    @page="onPage($event)"
+  ></Paginator>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-// import Paginate from "vuejs-paginate";
+// import HelloWorld from "./components/HelloWorld.vue";
+import Paginator from "primevue/paginator";
 import {
   fetchMoviesSearchQuery,
   fetchNormalizer,
@@ -54,60 +52,84 @@ import {
 export default {
   name: "App",
   components: {
-    HelloWorld,
-    // paginate: Paginate,
+    // HelloWorld,
+    Paginator,
   },
   data() {
     return {
       searchQuery: "",
       movies: [],
-      perPage: 5,
+      totalRecords: 0,
       currentPage: 1,
-      rows: 0,
+      offset: 0,
     };
   },
   created: async function () {
-    try {
-      const trendinMoviesData = await fetchTrendingMovies(1);
-      const trendinMovies = await trendinMoviesData.results;
-      this.movies = await fetchNormalizer(trendinMovies);
-      this.rows = trendinMovies.total_pages;
-    } catch (error) {
-      console.log("Что-то пошло не так");
-    }
+    this.fetchPopularMovies(0);
   },
   methods: {
-    addContact() {
-      const { name, number } = this;
-      const newContact = {
-        id: name,
-        name,
-        number,
-      };
-      this.contacts.push(newContact);
+    onPage(event) {
+      this.currentPage = event.page + 1;
+      if (this.searchQuery !== "") {
+        this.fetchMoviesSearch();
+      } else {
+        this.fetchPopularMovies();
+      }
+
+      //event.page: New page number
+      //event.first: Index of first record
+      //event.rows: Number of rows to display in new page
+      //event.pageCount: Total number of pages
     },
-    handleDeleteContact(contacToRemove) {
-      console.log(contacToRemove);
-      this.contacts = this.contacts.filter(
-        (contact) => contact !== contacToRemove
-      );
+    onSeach() {
+      this.fetchMoviesSearch();
+      this.offset = 0;
     },
-    async fetchMovies() {
+    async fetchPopularMovies() {
       try {
-        const popularMoviesData = await fetchMoviesSearchQuery(
-          this.searchQuery,
-          1
-        );
-        const popularMovies = await popularMoviesData.results;
-        this.movies = await fetchNormalizer(popularMovies);
-        this.rows = popularMoviesData.total_pages;
+        const trendinMoviesData = await fetchTrendingMovies(this.currentPage);
+        const trendinMovies = await trendinMoviesData.results;
+        this.movies = await fetchNormalizer(trendinMovies);
+        this.totalRecords = trendinMoviesData.total_pages;
       } catch (error) {
         console.log("Что-то пошло не так");
       }
     },
+    async fetchMoviesSearch() {
+      try {
+        const popularMoviesData = await fetchMoviesSearchQuery(
+          this.searchQuery,
+          this.currentPage
+        );
+        const popularMovies = await popularMoviesData.results;
+        this.movies = await fetchNormalizer(popularMovies);
+        this.totalRecords = popularMoviesData.total_pages;
+      } catch (error) {
+        console.log("Что-то пошло не так");
+      }
+    },
+    // addContact() {
+    //   const { name, number } = this;
+    //   const newContact = {
+    //     id: name,
+    //     name,
+    //     number,
+    //   };
+    //   this.contacts.push(newContact);
+    // },
+    // handleDeleteContact(contacToRemove) {
+    //   console.log(contacToRemove);
+    //   this.contacts = this.contacts.filter(
+    //     (contact) => contact !== contacToRemove
+    //   );
+    // },
   },
 };
 </script>
+
+<style src="primevue/resources/themes/saga-blue/theme.css"></style>
+<style src="primevue/resources/primevue.min.css"></style>
+<style src="primeicons/primeicons.css"></style>
 
 <style>
 .header {
