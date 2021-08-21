@@ -45,7 +45,7 @@
     </form>
     <ul class="movie-list">
       <li
-        @click="onAddWatched(m)"
+        @click="onMovieCardClick(m)"
         class="movie-item"
         v-for="m in movies"
         :key="m.id"
@@ -113,8 +113,23 @@ export default {
       //event.pageCount: Total number of pages
     },
 
-    onAddWatched(movie) {
-      this.toWatchArray.push(movie);
+    onMovieCardClick(movie) {
+      if (this.view === 'library') {
+        this.deleteWatched(movie);
+      } else {
+        this.addWatched(movie);
+      }
+    },
+
+    addWatched(movie) {
+      if (this.toWatchArray.some(({ id }) => id === movie.id)) {
+        return;
+      }
+      this.toWatchArray = [...this.toWatchArray, movie];
+    },
+
+    deleteWatched(movie) {
+      this.toWatchArray = this.toWatchArray.filter(({ id }) => id !== movie.id);
     },
 
     onSeach() {
@@ -177,6 +192,9 @@ export default {
 
     toWatchArray() {
       localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
+      if (this.view === 'library') {
+        this.movies = this.toWatchArray;
+      }
     },
 
     searchQuery() {
