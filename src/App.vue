@@ -1,12 +1,35 @@
 <template>
   <header class="header">
     <nav class="nav">
-      <a class="nav-link nav-activelink"> Home </a>
-      <a class="nav-link"> Movies </a>
+      <a
+        @click.prevent="onNavClick('home')"
+        class="nav-link"
+        :class="{ navactivelink: view === 'home' }"
+      >
+        Home
+      </a>
+      <a
+        @click.prevent="onNavClick('movies')"
+        class="nav-link"
+        :class="{ navactivelink: view === 'movies' }"
+      >
+        Movies
+      </a>
+      <a
+        @click.prevent="onNavClick('library')"
+        class="nav-link"
+        :class="{ navactivelink: view === 'library' }"
+      >
+        Library
+      </a>
     </nav>
   </header>
   <section>
-    <form class="search-form" @submit.prevent="onSeach">
+    <form
+      v-if="view === 'movies'"
+      class="search-form"
+      @submit.prevent="onSeach"
+    >
       <button class="search-form-button" type="submit">
         <lable class="search-form-lable">Search</lable>
       </button>
@@ -21,10 +44,15 @@
       />
     </form>
     <ul class="movie-list">
-      <li class="movie-item" v-for="m in movies" :key="m.id">
+      <li
+        @click="onAddWatched(m)"
+        class="movie-item"
+        v-for="m in movies"
+        :key="m.id"
+      >
         <img class="movie-img" :src="m.poster_path" :alt="m.title" />
         <h3 class="movie-title">{{ m.title }}</h3>
-        <p class="movie-text">{{ m.genres.join(", ") }}</p>
+        <p class="movie-text">{{ m.genres.join(', ') }}</p>
         <p>
           {{ m.release_date }} | <span>{{ m.vote_average }}</span>
         </p>
@@ -33,6 +61,7 @@
   </section>
   <!-- <HelloWorld /> -->
   <Paginator
+    v-if="movies.length > 19"
     v-model:first="first"
     :rows="20"
     :totalRecords="totalRecords"
@@ -42,35 +71,58 @@
 
 <script>
 // import HelloWorld from "./components/HelloWorld.vue";
-import Paginator from "primevue/paginator";
+import Paginator from 'primevue/paginator';
 import {
   fetchMoviesSearchQuery,
   fetchNormalizer,
   fetchTrendingMovies,
-} from "./services/apiService";
+} from './services/apiService';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     // HelloWorld,
     Paginator,
   },
   data() {
     return {
-      searchQuery: "",
+      searchQuery: '',
       movies: [],
+
       totalRecords: 0,
       currentPage: 1,
       first: 0,
+      view: 'home',
+      toWatchArray: [],
     };
   },
   created: async function () {
     this.fetchPopularMovies(0);
+    this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
   },
   methods: {
+    onNavClick(view) {
+      this.view = view;
+      switch (view) {
+        case 'home':
+          this.fetchPopularMovies();
+          break;
+        case 'movies':
+          this.movies = [];
+          break;
+        case 'library':
+          this.movies = this.toWatchArray;
+          this.totalRecords = this.toWatchArray.length;
+          break;
+
+        default:
+        // инструкции;
+      }
+    },
+
     onPage(event) {
       this.currentPage = event.page + 1;
-      if (this.searchQuery !== "") {
+      if (this.searchQuery !== '') {
         this.fetchMoviesSearch();
       } else {
         this.fetchPopularMovies();
@@ -80,6 +132,10 @@ export default {
       //event.first: Index of first record
       //event.rows: Number of rows to display in new page
       //event.pageCount: Total number of pages
+    },
+    onAddWatched(movie) {
+      this.toWatchArray.push(movie);
+      localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
     },
     onSeach() {
       this.fetchMoviesSearch();
@@ -92,37 +148,22 @@ export default {
         this.movies = await fetchNormalizer(trendinMovies);
         this.totalRecords = trendinMoviesData.total_results;
       } catch (error) {
-        console.log("Что-то пошло не так");
+        console.log('Что-то пошло не так');
       }
     },
     async fetchMoviesSearch() {
       try {
         const popularMoviesData = await fetchMoviesSearchQuery(
           this.searchQuery,
-          this.currentPage
+          this.currentPage,
         );
         const popularMovies = await popularMoviesData.results;
         this.movies = await fetchNormalizer(popularMovies);
         this.totalRecords = popularMoviesData.total_results;
       } catch (error) {
-        console.log("Что-то пошло не так");
+        console.log('Что-то пошло не так');
       }
     },
-    // addContact() {
-    //   const { name, number } = this;
-    //   const newContact = {
-    //     id: name,
-    //     name,
-    //     number,
-    //   };
-    //   this.contacts.push(newContact);
-    // },
-    // handleDeleteContact(contacToRemove) {
-    //   console.log(contacToRemove);
-    //   this.contacts = this.contacts.filter(
-    //     (contact) => contact !== contacToRemove
-    //   );
-    // },
   },
 };
 </script>
@@ -156,8 +197,9 @@ export default {
   text-decoration: none;
   font-size: 24px;
   color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
 }
-.nav-activelink {
+.navactivelink {
   color: #ffffff;
 }
 .search-form {
@@ -166,7 +208,6 @@ export default {
   justify-content: center;
   width: 100%;
   margin-bottom: 30px;
-  //max-width: 600px;
   background-color: #fff;
   border-radius: 3px;
   overflow: hidden;
@@ -177,7 +218,7 @@ export default {
   height: 48px;
   border: 0;
   background-color: rgba(0, 0, 0, 0.08);
-  background-image: url("https://image.flaticon.com/icons/svg/149/149852.svg");
+  background-image: url('https://image.flaticon.com/icons/svg/149/149852.svg');
   background-size: 40%;
   background-repeat: no-repeat;
   background-position: center;

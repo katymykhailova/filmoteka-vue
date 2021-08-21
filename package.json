@@ -1,10 +1,12 @@
 {
-  "name": "vue2",
+  "name": "filmoteka-vue",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://katymykhailova.github.io/filmoteka-vue",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "deploy": "sh deploy.sh",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
