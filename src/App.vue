@@ -26,7 +26,7 @@
   </header>
   <section>
     <form
-      v-if="view === 'movies'"
+      v-if="view === 'movies' || view === 'library'"
       class="search-form"
       @submit.prevent="onSeach"
     >
@@ -47,7 +47,7 @@
       <li
         @click="onMovieCardClick(m)"
         class="movie-item"
-        v-for="m in movies"
+        v-for="m in filteredMovies"
         :key="m.id"
       >
         <img class="movie-img" :src="m.poster_path" :alt="m.title" />
@@ -99,6 +99,14 @@ export default {
     this.fetchPopularMovies(0);
     this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
   },
+  computed: {
+    filteredMovies() {
+      return this.movies.filter(({ title }) =>
+        title.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      );
+    },
+  },
+
   methods: {
     onNavClick(view) {
       this.view = view;
@@ -133,7 +141,12 @@ export default {
     },
 
     onSeach() {
-      this.fetchMoviesSearch();
+      if (this.view === 'movies') {
+        // this.filteredrWatchedMovies;
+        this.fetchMoviesSearch();
+      } else {
+        // this.fetchMoviesSearch();
+      }
     },
 
     async fetchPopularMovies() {
