@@ -1,77 +1,43 @@
 <template>
-  <header class="header">
-    <nav class="nav">
-      <a
-        @click.prevent="onNavClick('home')"
-        class="nav-link"
-        :class="{ navactivelink: view === 'home' }"
-      >
-        Home
-      </a>
-      <a
-        @click.prevent="onNavClick('movies')"
-        class="nav-link"
-        :class="{ navactivelink: view === 'movies' }"
-      >
-        Movies
-      </a>
-      <a
-        @click.prevent="onNavClick('library')"
-        class="nav-link"
-        :class="{ navactivelink: view === 'library' }"
-      >
-        Library
-      </a>
-    </nav>
-  </header>
+  <app-bar>
+    <template #nav>
+      <navigation @nav-click="changeView" />
+    </template>
+  </app-bar>
+
   <section>
-    <form
+    <search-form
       v-if="view === 'movies' || view === 'library'"
-      class="search-form"
-      @submit.prevent="onSeach"
+      v-model:searchText="searchQuery"
+      @handle-submit="onSeach"
+    />
+    <movie-list
+      :movies="movies"
+      :searchQuery="searchQuery"
+      @card-click="onMovieCardClick"
     >
-      <button class="search-form-button" type="submit">
-        <lable class="search-form-lable">Search</lable>
-      </button>
-      <input
-        class="search-form-input"
-        v-model="searchQuery"
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        autoFocus
-        placeholder="Search images and photos"
-      />
-    </form>
-    <ul class="movie-list">
-      <li
-        @click="onMovieCardClick(m)"
-        class="movie-item"
-        v-for="m in filteredMovies"
-        :key="m.id"
-      >
-        <img class="movie-img" :src="m.poster_path" :alt="m.title" />
-        <h3 class="movie-title">{{ m.title }}</h3>
-        <p class="movie-text">{{ m.genres.join(', ') }}</p>
-        <p>
-          {{ m.release_date }} | <span>{{ m.vote_average }}</span>
-        </p>
-      </li>
-    </ul>
+      <template #movie="{ movie = {} }">
+        <movie-card :movie="movie" />
+      </template>
+    </movie-list>
   </section>
-  <!-- <HelloWorld /> -->
-  <Paginator
+  <paginator
     v-if="movies.length > 19"
     v-model:first="first"
     :rows="20"
     :totalRecords="totalRecords"
     @page="onPage($event)"
-  ></Paginator>
+  />
 </template>
 
 <script>
-// import HelloWorld from "./components/HelloWorld.vue";
 import Paginator from 'primevue/paginator';
+import AppBar from './components/AppBar.vue';
+import Navigation from './components/Navigation.vue';
+import MovieList from './components/MovieList.vue';
+import MovieCard from './components/MovieCard.vue';
+import SearchForm from './components/SearchForm.vue';
+
 import {
   fetchMoviesSearchQuery,
   fetchNormalizer,
@@ -81,8 +47,12 @@ import {
 export default {
   name: 'App',
   components: {
-    // HelloWorld,
     Paginator,
+    AppBar,
+    Navigation,
+    MovieList,
+    MovieCard,
+    SearchForm,
   },
   data() {
     return {
@@ -95,10 +65,12 @@ export default {
       view: 'home',
     };
   },
+
   created: async function () {
     this.fetchPopularMovies(0);
     this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
   },
+
   computed: {
     filteredMovies() {
       return this.movies.filter(({ title }) =>
@@ -108,7 +80,7 @@ export default {
   },
 
   methods: {
-    onNavClick(view) {
+    changeView(view) {
       this.view = view;
     },
 
@@ -142,10 +114,7 @@ export default {
 
     onSeach() {
       if (this.view === 'movies') {
-        // this.filteredrWatchedMovies;
         this.fetchMoviesSearch();
-      } else {
-        // this.fetchMoviesSearch();
       }
     },
 
@@ -177,6 +146,7 @@ export default {
 
   watch: {
     view() {
+      this.searchQuery = '';
       this.first = 0;
       switch (this.view) {
         case 'home':
