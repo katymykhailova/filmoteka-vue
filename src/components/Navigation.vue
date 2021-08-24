@@ -1,6 +1,6 @@
 <template>
   <nav class="nav">
-    <a
+    <!-- <a
       @click.prevent="onNavClick('home')"
       class="nav-link"
       :class="{ navactivelink: activelink === 'home' }"
@@ -20,27 +20,32 @@
       :class="{ navactivelink: activelink === 'library' }"
     >
       Library
-    </a>
+    </a> -->
+    <router-link class="nav-link" :to="{ name: 'Home' }">Home</router-link>
+    <router-link class="nav-link" :to="{ name: 'Movies' }">Movies</router-link>
+    <router-link class="nav-link" :to="{ name: 'Library' }"
+      >Library</router-link
+    >
   </nav>
 </template>
 
 <script>
 export default {
   name: 'Navigation',
-  data() {
-    return {
-      activelink: 'home',
-    };
-  },
-  emits: {
-    'nav-click': value => typeof value === 'string',
-  },
+  // data() {
+  //   return {
+  //     activelink: 'home',
+  //   };
+  // },
+  // emits: {
+  //   'nav-click': value => typeof value === 'string',
+  // },
 
-  methods: {
-    onNavClick(view) {
-      this.activelink = view;
-      this.$emit('nav-click', this.activelink);
-    },
-  },
+  // methods: {
+  //   onNavClick(view) {
+  //     this.activelink = view;
+  //     this.$emit('nav-click', this.activelink);
+  //   },
+  // },
 };
 </script>

@@ -16,7 +16,7 @@ export default {
   name: 'MovieList',
   props: {
     movies: { type: Array, required: true },
-    searchQuery: { type: String, required: true },
+    searchQuery: { type: String, required: false, default: '' },
   },
   computed: {
     filteredMovies() {
