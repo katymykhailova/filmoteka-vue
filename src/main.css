@@ -76,7 +76,7 @@ a {
 }
 .search-form-input {
   display: inline-block;
-  width: 600px;
+  max-width: 600px;
   height: 46px;
   font: inherit;
   font-size: 20px;
