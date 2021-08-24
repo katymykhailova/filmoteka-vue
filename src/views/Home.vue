@@ -39,8 +39,14 @@ export default {
   },
 
   created: async function () {
-    this.fetchPopularMovies(0);
     this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
+    const page = this.$route.query.page;
+    if (page) {
+      this.currentPage = page;
+      this.fetchPopularMovies();
+      return;
+    }
+    this.fetchPopularMovies();
   },
 
   methods: {
@@ -77,6 +83,9 @@ export default {
 
   watch: {
     currentPage() {
+      this.$router.push({
+        query: { page: this.currentPage },
+      });
       this.fetchPopularMovies();
     },
     toWatchArray() {

@@ -1,5 +1,5 @@
 <template>
-  <template v-if="filteredMovies">
+  <template v-if="showMovies">
     <section>
       <search-form v-model:searchText="searchQuery" @handle-submit="onSeach" />
       <movie-list
@@ -33,6 +33,9 @@ import {
   fetchNormalizer,
 } from '../services/apiService';
 
+// const page = new URLSearchParams(location.search).get('page') ?? 1;
+// const query = new URLSearchParams(location.search).get('query') ?? '';
+
 export default {
   name: 'Movies',
   components: {
@@ -54,10 +57,15 @@ export default {
 
   created: async function () {
     this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
+    const search = this.$route.query.search;
+    if (search) {
+      this.searchQuery = search;
+      this.fetchMoviesSearch();
+    }
   },
 
   computed: {
-    filteredMovies() {
+    showMovies() {
       return this.$route.params.movieId ? false : true;
     },
   },
@@ -99,10 +107,14 @@ export default {
 
   watch: {
     currentPage() {
+      this.$router.push({
+        query: { page: this.currentPage, search: this.searchQuery },
+      });
       this.fetchMoviesSearch();
     },
 
     searchQuery() {
+      this.$router.push({ query: { page: '1', search: this.searchQuery } });
       this.first = 0;
     },
 
