@@ -1,6 +1,6 @@
 <template>
   <section>
-    <search-form v-model:searchText="searchQuery" @handle-submit="onSeach" />
+    <search-form v-model:searchText="searchQuery" />
     <movie-list
       :movies="movies"
       :searchQuery="searchQuery"

@@ -1,7 +1,7 @@
 <template>
   <form class="search-form" @submit.prevent="onHandleSubmit">
     <button class="search-form-button" type="submit">
-      <lable class="search-form-lable">Search</lable>
+      <span class="search-form-lable">Search</span>
     </button>
     <label>
       <input
