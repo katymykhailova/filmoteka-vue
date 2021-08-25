@@ -1,7 +1,7 @@
 <template>
   <section>
     <search-form v-model:searchText="searchQuery" />
-    <movie-list :movies="movies" :searchQuery="searchQuery">
+    <movie-list :movies="filteredMovies">
       <template #movie="{ movie = {} }">
         <movie-card :movie="movie" />
       </template>
@@ -10,8 +10,9 @@
   <paginator
     v-if="toWatchArray.length > 19"
     v-model:first="first"
-    :rows="20"
+    :rows="rows"
     :totalRecords="totalRecords"
+    :currentPage="currentPage"
     @page="onPage($event)"
   />
 </template>
@@ -30,11 +31,13 @@ export default {
     MovieCard,
     SearchForm,
   },
+
   data() {
     return {
       searchQuery: '',
       movies: [],
       toWatchArray: [],
+      rows: 20,
       totalRecords: 0,
       currentPage: 1,
       first: 0,
@@ -53,15 +56,34 @@ export default {
     },
   },
 
+  computed: {
+    filteredMovies() {
+      return this.movies.filter(({ title }) =>
+        title.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      );
+    },
+  },
+
   watch: {
     currentPage() {
-      const begin = (this.currentPage - 1) * 20;
-      const end = (this.currentPage - 1) * 20 + 20;
+      const begin = (this.currentPage - 1) * this.rows;
+      const end = (this.currentPage - 1) * this.rows + this.rows;
       this.movies = this.toWatchArray.slice(begin, end);
+      this.$router.push({
+        query: { page: this.currentPage },
+      });
     },
 
     toWatchArray() {
       localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
+    },
+
+    $route(to) {
+      const page = to.query.page;
+      if (page) {
+        this.currentPage = page;
+        this.first = (Number(to.query.page) - 1) * this.rows;
+      }
     },
   },
 };

@@ -1,12 +1,9 @@
 <template>
+  <loader :loading="reqStatus === 'pending'" />
   <template v-if="showMovies">
     <section>
       <search-form v-model:searchText="searchQuery" @handle-submit="onSeach" />
-      <movie-list
-        :movies="movies"
-        :searchQuery="searchQuery"
-        @card-click="onMovieCardClick"
-      >
+      <movie-list :movies="movies">
         <template #movie="{ movie = {} }">
           <movie-card :movie="movie" />
         </template>
@@ -15,8 +12,9 @@
     <paginator
       v-if="movies.length > 19"
       v-model:first="first"
-      :rows="20"
+      :rows="rows"
       :totalRecords="totalRecords"
+      :currentPage="currentPage"
       @page="onPage($event)"
   /></template>
   <router-view></router-view>
@@ -27,14 +25,12 @@ import Paginator from 'primevue/paginator';
 import MovieList from '../components/MovieList.vue';
 import MovieCard from '../components/MovieCard.vue';
 import SearchForm from '../components/SearchForm.vue';
+import Loader from '../components/Loader.vue';
 
 import {
   fetchMoviesSearchQuery,
   fetchNormalizer,
 } from '../services/apiService';
-
-// const page = new URLSearchParams(location.search).get('page') ?? 1;
-// const query = new URLSearchParams(location.search).get('query') ?? '';
 
 export default {
   name: 'Movies',
@@ -43,23 +39,26 @@ export default {
     MovieList,
     MovieCard,
     SearchForm,
+    Loader,
   },
   data() {
     return {
       searchQuery: '',
       movies: [],
-      toWatchArray: [],
+      rows: 20,
       totalRecords: 0,
       currentPage: 1,
       first: 0,
+      reqStatus: 'idle',
     };
   },
 
   created: async function () {
-    this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
-    const search = this.$route.query.search;
+    const search = this.$route.query.search || '';
+    const page = this.$route.query.page || 1;
+    this.searchQuery = search;
+    this.currentPage = page;
     if (search) {
-      this.searchQuery = search;
       this.fetchMoviesSearch();
     }
   },
@@ -72,26 +71,20 @@ export default {
 
   methods: {
     onPage(event) {
-      this.currentPage = event.page + 1;
-    },
-
-    onMovieCardClick(movie) {
-      this.addWatched(movie);
-    },
-
-    addWatched(movie) {
-      if (this.toWatchArray.some(({ id }) => id === movie.id)) {
-        return;
-      }
-      this.toWatchArray = [...this.toWatchArray, movie];
+      this.$router.push({
+        query: { page: event.page + 1, search: this.searchQuery },
+      });
     },
 
     onSeach() {
+      this.$router.push({ query: { page: '1', search: this.searchQuery } });
+      this.first = 0;
       this.fetchMoviesSearch();
     },
 
     async fetchMoviesSearch() {
       try {
+        this.reqStatus = 'pending';
         const popularMoviesData = await fetchMoviesSearchQuery(
           this.searchQuery,
           this.currentPage,
@@ -99,27 +92,24 @@ export default {
         const popularMovies = await popularMoviesData.results;
         this.movies = await fetchNormalizer(popularMovies);
         this.totalRecords = popularMoviesData.total_results;
+        this.reqStatus = 'resolved';
       } catch (error) {
+        this.reqStatus = 'rejected';
         console.log('Что-то пошло не так');
       }
     },
   },
 
   watch: {
-    currentPage() {
-      this.$router.push({
-        query: { page: this.currentPage, search: this.searchQuery },
-      });
+    $route(to) {
+      const page = to.query.page || 1;
+      const search = to.query.search;
+      this.currentPage = page;
+      this.first = (Number(page) - 1) * this.rows;
+      if (search) {
+        this.searchQuery = search;
+      }
       this.fetchMoviesSearch();
-    },
-
-    searchQuery() {
-      this.$router.push({ query: { page: '1', search: this.searchQuery } });
-      this.first = 0;
-    },
-
-    toWatchArray() {
-      localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
     },
   },
 };

@@ -51,7 +51,9 @@ export default {
 
   methods: {
     onPage(event) {
-      this.currentPage = event.page + 1;
+      this.$router.push({
+        query: { page: event.page + 1 },
+      });
       //event.page: New page number
       //event.first: Index of first record
       //event.rows: Number of rows to display in new page
@@ -74,18 +76,11 @@ export default {
   },
 
   watch: {
-    currentPage() {
-      this.$router.push({
-        query: { page: this.currentPage },
-      });
+    $route(to) {
+      const page = to.query.page || 1;
+      this.currentPage = page;
+      this.first = (Number(page) - 1) * this.rows;
       this.fetchPopularMovies();
-    },
-
-    $route(to, from) {
-      console.dir(to);
-      console.dir(from);
-      this.currentPage = to.query.page ?? 1;
-      this.first = (Number(to.query.page) - 1) * this.rows;
     },
   },
 };
