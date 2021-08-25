@@ -46,6 +46,7 @@ export default {
   created: function () {
     const page = this.$route.query.page || 1;
     this.currentPage = page;
+    this.first = (Number(page) - 1) * this.rows;
     this.fetchPopularMovies();
   },
 

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <search-form v-model:searchText="searchQuery" />
+    <search-form v-model:searchText="searchQuery" @handle-submit="onSeach" />
     <movie-list :movies="filteredMovies">
       <template #movie="{ movie = {} }">
         <movie-card :movie="movie" />
@@ -8,7 +8,7 @@
     </movie-list>
   </section>
   <paginator
-    v-if="toWatchArray.length > 19"
+    v-if="movies.length >= rows"
     v-model:first="first"
     :rows="rows"
     :totalRecords="totalRecords"
@@ -47,43 +47,47 @@ export default {
   created: function () {
     this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
     this.totalRecords = this.toWatchArray.length;
-    this.movies = this.toWatchArray;
+    this.setMovies();
   },
 
   methods: {
     onPage(event) {
-      this.currentPage = event.page + 1;
+      const query = this.searchQuery
+        ? { page: event.page + 1, search: this.searchQuery }
+        : { page: event.page + 1 };
+      this.$router.push({
+        query,
+      });
     },
-  },
 
-  computed: {
-    filteredMovies() {
-      return this.movies.filter(({ title }) =>
+    onSeach() {
+      this.$router.push({ query: { page: '1', search: this.searchQuery } });
+      this.first = 0;
+    },
+
+    setMovies() {
+      this.movies = this.toWatchArray.filter(({ title }) =>
         title.toLowerCase().includes(this.searchQuery.toLowerCase()),
       );
     },
   },
 
-  watch: {
-    currentPage() {
+  computed: {
+    filteredMovies() {
       const begin = (this.currentPage - 1) * this.rows;
       const end = (this.currentPage - 1) * this.rows + this.rows;
-      this.movies = this.toWatchArray.slice(begin, end);
-      this.$router.push({
-        query: { page: this.currentPage },
-      });
+      return this.movies.slice(begin, end);
     },
+  },
 
-    toWatchArray() {
-      localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
-    },
-
+  watch: {
     $route(to) {
-      const page = to.query.page;
-      if (page) {
-        this.currentPage = page;
-        this.first = (Number(to.query.page) - 1) * this.rows;
-      }
+      const page = to.query.page || 1;
+      const search = to.query.search || '';
+      this.searchQuery = search;
+      this.currentPage = page;
+      this.first = (Number(page) - 1) * this.rows;
+      this.setMovies();
     },
   },
 };

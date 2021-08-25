@@ -53,11 +53,13 @@ export default {
     };
   },
 
-  created: async function () {
+  created: function () {
     const search = this.$route.query.search || '';
     const page = this.$route.query.page || 1;
     this.searchQuery = search;
     this.currentPage = page;
+    this.first = (Number(page) - 1) * this.rows;
+
     if (search) {
       this.fetchMoviesSearch();
     }
