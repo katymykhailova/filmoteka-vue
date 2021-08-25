@@ -1,11 +1,6 @@
 <template>
   <ul class="movie-list">
-    <li
-      @click="onCardClick(movie)"
-      class="movie-item"
-      v-for="movie in filteredMovies"
-      :key="movie.id"
-    >
+    <li class="movie-item" v-for="movie in filteredMovies" :key="movie.id">
       <slot name="movie" :movie="movie"> </slot>
     </li>
   </ul>
@@ -27,12 +22,6 @@ export default {
   },
   emits: {
     'card-click': value => typeof value === 'object',
-  },
-
-  methods: {
-    onCardClick(movie) {
-      this.$emit('card-click', movie);
-    },
   },
 };
 </script>

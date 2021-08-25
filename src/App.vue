@@ -1,60 +1,21 @@
 <template>
   <app-bar>
     <template #nav>
-      <!-- <navigation @nav-click="changeView" /> -->
       <navigation />
     </template>
   </app-bar>
-
-  <!-- <section>
-    <search-form
-      v-if="view === 'movies' || view === 'library'"
-      v-model:searchText="searchQuery"
-      @handle-submit="onSeach"
-    />
-    <movie-list
-      :movies="movies"
-      :searchQuery="searchQuery"
-      @card-click="onMovieCardClick"
-    >
-      <template #movie="{ movie = {} }">
-        <movie-card :movie="movie" />
-      </template>
-    </movie-list>
-  </section>
-  <paginator
-    v-if="movies.length > 19"
-    v-model:first="first"
-    :rows="20"
-    :totalRecords="totalRecords"
-    @page="onPage($event)"
-  /> -->
   <router-view></router-view>
 </template>
 
 <script>
 import AppBar from './components/AppBar.vue';
 import Navigation from './components/Navigation.vue';
-// import Paginator from 'primevue/paginator';
-// import MovieList from './components/MovieList.vue';
-// import MovieCard from './components/MovieCard.vue';
-// import SearchForm from './components/SearchForm.vue';
-
-// import {
-//   fetchMoviesSearchQuery,
-//   fetchNormalizer,
-//   fetchTrendingMovies,
-// } from './services/apiService';
 
 export default {
   name: 'App',
   components: {
     AppBar,
     Navigation,
-    // Paginator,
-    // MovieList,
-    // MovieCard,
-    // SearchForm,
   },
   //   data() {
   //     return {

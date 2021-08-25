@@ -1,6 +1,7 @@
 <template>
+  <loader :loading="reqStatus === 'pending'" />
   <section>
-    <movie-list :movies="movies" @card-click="onMovieCardClick">
+    <movie-list :movies="movies">
       <template #movie="{ movie = {} }">
         <movie-card :movie="movie" />
       </template>
@@ -9,8 +10,9 @@
   <paginator
     v-if="movies.length > 19"
     v-model:first="first"
-    :rows="20"
+    :rows="rows"
     :totalRecords="totalRecords"
+    :currentPage="currentPage"
     @page="onPage($event)"
   />
 </template>
@@ -19,6 +21,7 @@
 import Paginator from 'primevue/paginator';
 import MovieList from '../components/MovieList.vue';
 import MovieCard from '../components/MovieCard.vue';
+import Loader from '../components/Loader.vue';
 import { fetchNormalizer, fetchTrendingMovies } from '../services/apiService';
 
 export default {
@@ -27,25 +30,22 @@ export default {
     Paginator,
     MovieList,
     MovieCard,
+    Loader,
   },
   data() {
     return {
       movies: [],
-      toWatchArray: [],
+      rows: 20,
       totalRecords: 0,
       currentPage: 1,
       first: 0,
+      reqStatus: 'idle',
     };
   },
 
-  created: async function () {
-    this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
-    const page = this.$route.query.page;
-    if (page) {
-      this.currentPage = page;
-      this.fetchPopularMovies();
-      return;
-    }
+  created: function () {
+    const page = this.$route.query.page || 1;
+    this.currentPage = page;
     this.fetchPopularMovies();
   },
 
@@ -58,24 +58,16 @@ export default {
       //event.pageCount: Total number of pages
     },
 
-    onMovieCardClick(movie) {
-      this.addWatched(movie);
-    },
-
-    addWatched(movie) {
-      if (this.toWatchArray.some(({ id }) => id === movie.id)) {
-        return;
-      }
-      this.toWatchArray = [...this.toWatchArray, movie];
-    },
-
     async fetchPopularMovies() {
       try {
+        this.reqStatus = 'pending';
         const trendinMoviesData = await fetchTrendingMovies(this.currentPage);
         const trendinMovies = await trendinMoviesData.results;
         this.movies = await fetchNormalizer(trendinMovies);
         this.totalRecords = trendinMoviesData.total_results;
+        this.reqStatus = 'resolved';
       } catch (error) {
+        this.reqStatus = 'rejected';
         console.log('Что-то пошло не так');
       }
     },
@@ -88,8 +80,12 @@ export default {
       });
       this.fetchPopularMovies();
     },
-    toWatchArray() {
-      localStorage.setItem(`WATCHED`, JSON.stringify(this.toWatchArray));
+
+    $route(to, from) {
+      console.dir(to);
+      console.dir(from);
+      this.currentPage = to.query.page ?? 1;
+      this.first = (Number(to.query.page) - 1) * this.rows;
     },
   },
 };

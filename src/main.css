@@ -3,6 +3,8 @@ a {
   color: rgba(0,0,0,.87);
 }
 
+button:disabled{cursor: auto;}
+
 .header {
   display: flex;
   align-items: center;
@@ -240,7 +242,7 @@ a {
   margin: 0 0 15px;
 }
 
-.movie-details-link {
+.movie-details-link, .movie-details-button {
   display: inline-block;
   min-width: 110px;
   padding: 10px;

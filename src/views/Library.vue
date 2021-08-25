@@ -1,11 +1,7 @@
 <template>
   <section>
     <search-form v-model:searchText="searchQuery" />
-    <movie-list
-      :movies="movies"
-      :searchQuery="searchQuery"
-      @card-click="onMovieCardClick"
-    >
+    <movie-list :movies="movies" :searchQuery="searchQuery">
       <template #movie="{ movie = {} }">
         <movie-card :movie="movie" />
       </template>
@@ -54,14 +50,6 @@ export default {
   methods: {
     onPage(event) {
       this.currentPage = event.page + 1;
-    },
-
-    onMovieCardClick(movie) {
-      this.deleteWatched(movie);
-    },
-
-    deleteWatched(movie) {
-      this.toWatchArray = this.toWatchArray.filter(({ id }) => id !== movie.id);
     },
   },
 
