@@ -44,6 +44,10 @@ export default {
     };
   },
 
+  props: {
+    addMessage: { type: Function, required: true },
+  },
+
   created: function () {
     this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
     this.totalRecords = this.toWatchArray.length;
