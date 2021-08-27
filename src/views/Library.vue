@@ -64,6 +64,13 @@ export default {
       });
     },
 
+    scrollTo() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
+
     onSeach() {
       this.$router.push({ query: { page: '1', search: this.searchQuery } });
       this.first = 0;
@@ -92,6 +99,7 @@ export default {
       this.currentPage = page;
       this.first = (Number(page) - 1) * this.rows;
       this.setMovies();
+      this.scrollTo();
     },
   },
 };

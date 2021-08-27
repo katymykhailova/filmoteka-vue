@@ -66,6 +66,13 @@ export default {
       //event.pageCount: Total number of pages
     },
 
+    scrollTo() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
+
     async fetchPopularMovies() {
       try {
         this.reqStatus = 'pending';
@@ -87,6 +94,7 @@ export default {
       this.currentPage = page;
       this.first = (Number(page) - 1) * this.rows;
       this.fetchPopularMovies();
+      this.scrollTo();
     },
   },
 };

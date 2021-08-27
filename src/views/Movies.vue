@@ -58,7 +58,7 @@ export default {
     addMessage: { type: Function, required: true },
   },
 
-  created: function () {
+  created() {
     const search = this.$route.query.search || '';
     const page = this.$route.query.page || 1;
     this.searchQuery = search;
@@ -80,6 +80,13 @@ export default {
     onPage(event) {
       this.$router.push({
         query: { page: event.page + 1, search: this.searchQuery },
+      });
+    },
+
+    scrollTo() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
       });
     },
 
@@ -119,6 +126,7 @@ export default {
         this.searchQuery = search;
       }
       this.fetchMoviesSearch();
+      this.scrollTo();
     },
   },
 };
