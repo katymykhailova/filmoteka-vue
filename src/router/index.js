@@ -16,11 +16,10 @@ const routes = [
     path: '/movies',
     name: 'Movies',
     component: Movies,
-    props: true,
     children: [
       {
         name: 'Movie',
-        path: '/:movieId',
+        path: '/movies/:movieId',
         component: Movie,
         children: [
           {
@@ -37,23 +36,6 @@ const routes = [
       },
     ],
   },
-  // {
-  //   name: 'Movie',
-  //   path: '/movies/:movieId',
-  //   component: Movie,
-  //   children: [
-  //     {
-  //       name: 'Cast',
-  //       path: 'cast',
-  //       component: Cast,
-  //     },
-  //     {
-  //       name: 'Reviews',
-  //       path: 'reviews',
-  //       component: Reviews,
-  //     },
-  //   ],
-  // },
   {
     path: '/library',
     name: 'Library',

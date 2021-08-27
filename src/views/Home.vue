@@ -45,7 +45,7 @@ export default {
   },
 
   props: {
-    addMessage: { type: Function },
+    addMessage: { type: Function, required: true },
   },
 
   created: function () {

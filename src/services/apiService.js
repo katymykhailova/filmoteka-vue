@@ -44,7 +44,7 @@ export const fetchMovieCredits = async id => {
   const castMovie = await response.data;
   const modalCast = await castMovie.cast;
   if (modalCast.length === 0) {
-    throw new Error(`404 Not found`);
+    throw new Error(`404 Not found credits`);
   }
 
   const updatedModalCast = modalCast.map(movie => {
@@ -64,7 +64,7 @@ export const fetchMovieReviews = async id => {
   );
   const modalMovie = await response.data;
   if (modalMovie.results.length === 0) {
-    throw new Error(`404 Not found`);
+    throw new Error(`404 Not found reviews`);
   }
 
   return modalMovie;

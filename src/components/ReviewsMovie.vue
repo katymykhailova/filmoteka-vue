@@ -6,7 +6,9 @@
     </li>
   </ul>
 
-  <!-- <p class="reviews-error">We don't have any reviews for this movie</p> -->
+  <p v-if="reqStatus === 'rejected'" class="reviews-error">
+    We don't have any reviews for this movie
+  </p>
 </template>
 <script>
 export default {
@@ -15,6 +17,11 @@ export default {
     reviews: {
       type: Array,
       required: true,
+    },
+    reqStatus: {
+      type: String,
+      required: true,
+      default: 'idle',
     },
   },
 };

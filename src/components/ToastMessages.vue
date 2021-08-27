@@ -31,8 +31,8 @@
 export default {
   name: 'ToastMessages',
   props: {
-    messages: { type: Array },
-    removeMessage: { type: Function },
+    messages: { type: Array, required: true },
+    removeMessage: { type: Function, required: true },
   },
 };
 </script>

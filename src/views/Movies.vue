@@ -17,7 +17,7 @@
       :currentPage="currentPage"
       @page="onPage($event)"
   /></template>
-  <router-view></router-view>
+  <router-view :addMessage="addMessage"></router-view>
 </template>
 
 <script>
@@ -55,7 +55,7 @@ export default {
   },
 
   props: {
-    addMessage: { type: Function },
+    addMessage: { type: Function, required: true },
   },
 
   created: function () {

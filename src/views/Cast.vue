@@ -1,5 +1,5 @@
 <template>
-  <cast-movie v-if="credits" :credits="credits" />
+  <cast-movie v-if="credits" :credits="credits" :reqStatus="reqStatus" />
 </template>
 
 <script>
@@ -13,11 +13,22 @@ export default {
   },
 
   data() {
-    return { credits: [] };
+    return { credits: [], reqStatus: 'idle' };
+  },
+
+  props: {
+    addMessage: { type: Function, required: true },
   },
 
   created: async function () {
-    this.credits = await fetchMovieCredits(this.$route.params.movieId);
+    try {
+      this.reqStatus = 'pending';
+      this.credits = await fetchMovieCredits(this.$route.params.movieId);
+      this.reqStatus = 'resolved';
+    } catch (error) {
+      this.reqStatus = 'rejected';
+      this.addMessage(error.message);
+    }
   },
 };
 </script>

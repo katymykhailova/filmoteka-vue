@@ -9,7 +9,7 @@
   <a @click.stop="onWatchedClick" class="movie-details-link">
     {{ addedMovie ? 'Remove from watched' : 'Add to watched' }}
   </a>
-  <router-view></router-view>
+  <router-view :addMessage="addMessage"></router-view>
 </template>
 
 <script>
@@ -27,13 +27,27 @@ export default {
       movie: null,
       toWatchArray: [],
       addedMovie: false,
+      reqStatus: 'idle',
     };
   },
 
+  props: {
+    addMessage: { type: Function, required: true },
+  },
+
   created: async function () {
-    this.movie = await fetchMovieDetails(this.$route.params.movieId);
-    this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
-    this.addedMovie = this.toWatchArray.some(({ id }) => id === this.movie.id);
+    try {
+      this.reqStatus = 'pending';
+      this.movie = await fetchMovieDetails(this.$route.params.movieId);
+      this.reqStatus = 'resolved';
+      this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
+      this.addedMovie = this.toWatchArray.some(
+        ({ id }) => id === this.movie.id,
+      );
+    } catch (error) {
+      this.reqStatus = 'rejected';
+      this.addMessage(error.message);
+    }
   },
 
   methods: {
