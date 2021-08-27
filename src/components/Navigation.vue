@@ -32,20 +32,5 @@
 <script>
 export default {
   name: 'Navigation',
-  // data() {
-  //   return {
-  //     activelink: 'home',
-  //   };
-  // },
-  // emits: {
-  //   'nav-click': value => typeof value === 'string',
-  // },
-
-  // methods: {
-  //   onNavClick(view) {
-  //     this.activelink = view;
-  //     this.$emit('nav-click', this.activelink);
-  //   },
-  // },
 };
 </script>

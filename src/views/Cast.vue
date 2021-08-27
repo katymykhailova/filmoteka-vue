@@ -17,7 +17,6 @@ export default {
   },
 
   created: async function () {
-    // console.log(this.$route.params.movieId);
     this.credits = await fetchMovieCredits(this.$route.params.movieId);
   },
 };
