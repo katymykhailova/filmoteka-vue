@@ -16,6 +16,7 @@ const routes = [
     path: '/movies',
     name: 'Movies',
     component: Movies,
+    props: true,
     children: [
       {
         name: 'Movie',

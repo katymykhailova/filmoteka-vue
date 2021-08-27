@@ -7,9 +7,6 @@
       </template>
     </movie-list>
   </section>
-  <toast-alert @close-toast="closeToast" :showToast="showToast">
-    {{ message }}
-  </toast-alert>
   <paginator
     v-if="movies.length > 19"
     v-model:first="first"
@@ -24,7 +21,6 @@
 import Paginator from 'primevue/paginator';
 import MovieList from '../components/MovieList.vue';
 import MovieCard from '../components/MovieCard.vue';
-import ToastAlert from '../components/ToastAlert.vue';
 import Loader from '../components/Loader.vue';
 import { fetchNormalizer, fetchTrendingMovies } from '../services/apiService';
 
@@ -35,8 +31,8 @@ export default {
     MovieList,
     MovieCard,
     Loader,
-    ToastAlert,
   },
+
   data() {
     return {
       movies: [],
@@ -45,9 +41,11 @@ export default {
       currentPage: 1,
       first: 0,
       reqStatus: 'idle',
-      showToast: false,
-      message: '',
     };
+  },
+
+  props: {
+    addMessage: { type: Function },
   },
 
   created: function () {
@@ -68,10 +66,6 @@ export default {
       //event.pageCount: Total number of pages
     },
 
-    closeToast() {
-      this.showToast = false;
-    },
-
     async fetchPopularMovies() {
       try {
         this.reqStatus = 'pending';
@@ -82,9 +76,7 @@ export default {
         this.reqStatus = 'resolved';
       } catch (error) {
         this.reqStatus = 'rejected';
-        this.message = error.message;
-        this.showToast = true;
-        setTimeout(() => (this.showToast = false), 3000);
+        this.addMessage(error.message);
       }
     },
   },

@@ -9,9 +9,6 @@
         </template>
       </movie-list>
     </section>
-    <toast-alert @close-toast="closeToast" :showToast="showToast">
-      {{ message }}
-    </toast-alert>
     <paginator
       v-if="movies.length > 19"
       v-model:first="first"
@@ -28,7 +25,6 @@ import Paginator from 'primevue/paginator';
 import MovieList from '../components/MovieList.vue';
 import MovieCard from '../components/MovieCard.vue';
 import SearchForm from '../components/SearchForm.vue';
-import ToastAlert from '../components/ToastAlert.vue';
 import Loader from '../components/Loader.vue';
 
 import {
@@ -44,8 +40,8 @@ export default {
     MovieCard,
     SearchForm,
     Loader,
-    ToastAlert,
   },
+
   data() {
     return {
       searchQuery: '',
@@ -55,9 +51,11 @@ export default {
       currentPage: 1,
       first: 0,
       reqStatus: 'idle',
-      showToast: false,
-      message: '',
     };
+  },
+
+  props: {
+    addMessage: { type: Function },
   },
 
   created: function () {
@@ -88,14 +86,12 @@ export default {
     onSeach() {
       this.$router.push({ query: { page: '1', search: this.searchQuery } });
       this.first = 0;
-      this.fetchMoviesSearch();
-    },
-
-    closeToast() {
-      this.showToast = false;
     },
 
     async fetchMoviesSearch() {
+      if (!this.searchQuery) {
+        return;
+      }
       try {
         this.reqStatus = 'pending';
         const popularMoviesData = await fetchMoviesSearchQuery(
@@ -108,9 +104,7 @@ export default {
         this.reqStatus = 'resolved';
       } catch (error) {
         this.reqStatus = 'rejected';
-        this.message = error.message;
-        this.showToast = true;
-        setTimeout(() => (this.showToast = false), 3000);
+        this.addMessage(error.message);
       }
     },
   },
