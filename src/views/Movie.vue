@@ -47,11 +47,9 @@ export default {
       this.movie = await fetchMovieDetails(movieId);
       this.reqStatus = 'resolved';
       this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
-      if (this.toWatchArray) {
-        this.addedMovie = this.toWatchArray.some(
-          ({ id }) => id === this.movie.id,
-        );
-      }
+      this.addedMovie = this.toWatchArray.some(
+        ({ id }) => id === this.movie.id,
+      );
     } catch (error) {
       this.reqStatus = 'rejected';
       this.addMessage(error.message);
