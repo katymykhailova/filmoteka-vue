@@ -1,14 +1,16 @@
 <template>
   <movie-details v-if="movie" :movie="movie" />
-  <router-link :to="{ name: 'Cast' }" class="movie-details-link"
-    >Cast
-  </router-link>
-  <router-link :to="{ name: 'Reviews' }" class="movie-details-link"
-    >Reviews
-  </router-link>
-  <a @click.stop="onWatchedClick" class="movie-details-link">
-    {{ addedMovie ? 'Remove from watched' : 'Add to watched' }}
-  </a>
+  <template v-if="reqStatus === 'resolved'">
+    <router-link :to="{ name: 'Cast' }" class="movie-details-link"
+      >Cast
+    </router-link>
+    <router-link :to="{ name: 'Reviews' }" class="movie-details-link"
+      >Reviews
+    </router-link>
+    <a @click.stop="onWatchedClick" class="movie-details-link">
+      {{ addedMovie ? 'Remove from watched' : 'Add to watched' }}
+    </a>
+  </template>
   <router-view :addMessage="addMessage"></router-view>
 </template>
 
@@ -36,9 +38,13 @@ export default {
   },
 
   created: async function () {
+    const movieId = this.$route.params.movieId;
+    if (!movieId) {
+      return;
+    }
     try {
       this.reqStatus = 'pending';
-      this.movie = await fetchMovieDetails(this.$route.params.movieId);
+      this.movie = await fetchMovieDetails(movieId);
       this.reqStatus = 'resolved';
       this.toWatchArray = JSON.parse(localStorage.getItem('WATCHED')) || [];
       this.addedMovie = this.toWatchArray.some(

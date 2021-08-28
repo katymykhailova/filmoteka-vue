@@ -16,6 +16,8 @@ const Reviews = () =>
   import(/* webpackChunkName: "Reviews" */ '../views/Reviews.vue');
 const Library = () =>
   import(/* webpackChunkName: "Library" */ '../views/Library.vue');
+const NotFound = () =>
+  import(/* webpackChunkName: "NotFound" */ '../views/NotFound.vue');
 
 const routes = [
   {
@@ -51,6 +53,11 @@ const routes = [
     path: '/library',
     name: 'Library',
     component: Library,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound,
   },
 ];
 
