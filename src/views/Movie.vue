@@ -31,7 +31,7 @@
   </template>
   <router-view :addMessage="addMessage"></router-view>
   <teleport to="#modal">
-    <modal ref="trailerModal">
+    <modal :title="movie.original_title" ref="trailerModal">
       <iframe
         width="560"
         height="315"

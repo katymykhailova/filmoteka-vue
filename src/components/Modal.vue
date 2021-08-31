@@ -1,18 +1,22 @@
 <template>
   <div v-if="isOpen" class="modal-backdrop" @click="close">
     <div class="modal-content" @click.stop>
-      <button @click.stop="close" class="modal-close-btn">
-        <svg
-          width="30"
-          height="30"
-          viewBox="0 0 30 30"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M8 8L22 22" stroke="white" stroke-width="2" />
-          <path d="M8 22L22 8" stroke="white" stroke-width="2" />
-        </svg>
-      </button>
+      <div class="modal-title-bar">
+        <h2 class="modal-title">{{ title }}</h2>
+        <button @click.stop="close" class="modal-close-btn">
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 30 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M8 8L22 22" stroke="white" stroke-width="2" />
+            <path d="M8 22L22 8" stroke="white" stroke-width="2" />
+          </svg>
+        </button>
+      </div>
+
       <slot></slot>
     </div>
   </div>
@@ -23,6 +27,10 @@ export default {
   name: 'Modal',
   data() {
     return { isOpen: false };
+  },
+
+  props: {
+    title: { type: String, default: '' },
   },
 
   methods: {
@@ -55,12 +63,18 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  padding-top: 10px;
+  background-color: black;
+}
+
+.modal-title-bar {
+  position: relative;
 }
 
 .modal-close-btn {
   position: absolute;
-  top: -35px;
-  right: -35px;
+  top: 0;
+  right: 5px;
   margin: 0;
   padding: 0;
   background: transparent;
@@ -70,5 +84,11 @@ export default {
 }
 .modal-close-btn:hover {
   transform: scale(1.3);
+}
+
+.modal-title {
+  padding: 0 10px;
+  margin: 0 0 10px 0;
+  color: #ffffff;
 }
 </style>

@@ -257,11 +257,10 @@ button:disabled{cursor: auto;}
 
 .movie-details-link, .movie-details-button {
   display: inline-block;
-  min-width: 110px;
+  min-width: 80px;
+  margin-left: 5px;
   padding: 10px;
-  margin-left: 25px;
   text-decoration: none;
-  font-size: 24px;
   text-align: center;
   border: rgba(0, 0, 0, 0.08) solid 1px;
 
@@ -271,6 +270,19 @@ button:disabled{cursor: auto;}
   cursor: pointer;
   outline: none;
 }
+
+@media screen and (min-width: 680px) {
+  .movie-details-link {
+    min-width: 110px;
+    margin-left: 25px;
+    font-size: 24px;}
+}
+
+@media screen and (min-width: 680px) {
+  .section-movie {display: flex;}
+  .movie-info{margin: 0 50px;} 
+}
+
 
 .movie-details-link:hover {
   opacity: 1;
