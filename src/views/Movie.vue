@@ -1,5 +1,23 @@
 <template>
-  <movie-details v-if="movie" :movie="movie" />
+  <movie-details v-if="movie" :movie="movie">
+    <template #trailerBtn>
+      <button-trailer @click="trailer">
+        <svg
+          class="trailerSvg"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+        >
+          <path
+            d="M30.662 5.003c-4.488-0.645-9.448-1.003-14.662-1.003s-10.174 0.358-14.662 1.003c-0.86 3.366-1.338 7.086-1.338 10.997s0.477 7.63 1.338 10.997c4.489 0.645 9.448 1.003 14.662 1.003s10.174-0.358 14.662-1.003c0.86-3.366 1.338-7.086 1.338-10.997s-0.477-7.63-1.338-10.997zM12 22v-12l10 6-10 6z"
+          ></path>
+        </svg>
+      </button-trailer>
+    </template>
+  </movie-details>
+
   <template v-if="reqStatus === 'resolved'">
     <router-link :to="{ name: 'Cast' }" class="movie-details-link"
       >Cast
@@ -12,16 +30,30 @@
     </a>
   </template>
   <router-view :addMessage="addMessage"></router-view>
+  <modal ref="trailerModal">
+    <iframe
+      width="560"
+      height="315"
+      :src="'https://www.youtube.com/embed/' + idMoviesTrailer"
+      frameborder="0"
+      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </modal>
 </template>
 
 <script>
 import MovieDetails from '../components/MovieDetails.vue';
-import { fetchMovieDetails } from '../services/apiService';
+import ButtonTrailer from '../components/ButtonTrailer.vue';
+import Modal from '../components/Modal.vue';
+import { fetchMovieDetails, fetchTrailerMovie } from '../services/apiService';
 
 export default {
   name: 'Movie',
   components: {
     MovieDetails,
+    ButtonTrailer,
+    Modal,
   },
 
   data() {
@@ -30,6 +62,7 @@ export default {
       toWatchArray: [],
       addedMovie: false,
       reqStatus: 'idle',
+      idMoviesTrailer: null,
     };
   },
 
@@ -57,6 +90,13 @@ export default {
   },
 
   methods: {
+    async trailer() {
+      this.idMoviesTrailer = await fetchTrailerMovie(this.movie.id);
+      if (this.idMoviesTrailer) {
+        this.$refs.trailerModal.open();
+      }
+    },
+
     onWatchedClick() {
       if (this.addedMovie) {
         this.deleteWatched();
@@ -66,6 +106,7 @@ export default {
         this.addedMovie = true;
       }
     },
+
     addWatched() {
       if (this.addedMovie) {
         return;
@@ -73,6 +114,7 @@ export default {
       this.toWatchArray = [...this.toWatchArray, this.movie];
       this.addedMovie = true;
     },
+
     deleteWatched() {
       this.toWatchArray = this.toWatchArray.filter(
         ({ id }) => id !== this.movie.id,

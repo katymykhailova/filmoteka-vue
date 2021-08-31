@@ -6,6 +6,15 @@ const API_KEY = '3bb7c750e6d9b2ae7509ab17b85a7611';
 
 axios.defaults.baseURL = BASE_URL;
 
+export const fetchTrailerMovie = async id => {
+  const response = await axios.get(
+    `movie/${id}/videos?api_key=${API_KEY}&language=en-US`,
+  );
+  const data = await response.data;
+  const sourseId = data.results[0].key;
+  return sourseId;
+};
+
 export const fetchTrendingMovies = async page => {
   const response = await axios.get(
     `/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`,
