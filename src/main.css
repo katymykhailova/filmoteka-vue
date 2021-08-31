@@ -352,10 +352,10 @@ button:disabled{cursor: auto;}
   width: 14px;
 }
 
-.trailerSvg{
-  fill: rgba(0,0,0,.5);
+.trailer-svg{
+  fill: #f59210;
 }
 
-.trailerSvg:hover{
-  fill: #f59210;
+.trailer-svg:hover{
+  fill: #e74c3c;
 }
