@@ -1,25 +1,27 @@
 <template>
-  <div v-if="isOpen" class="modal-backdrop" @click="close">
-    <div class="modal-content" @click.stop>
-      <div class="modal-title-bar">
-        <h2 class="modal-title">{{ title }}</h2>
-        <button @click.stop="close" class="modal-close-btn">
-          <svg
-            width="30"
-            height="30"
-            viewBox="0 0 30 30"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M8 8L22 22" stroke="white" stroke-width="2" />
-            <path d="M8 22L22 8" stroke="white" stroke-width="2" />
-          </svg>
-        </button>
-      </div>
+  <transition name="modal">
+    <div v-if="isOpen" class="modal-backdrop" @click="close">
+      <div class="modal-content" @click.stop>
+        <div class="modal-title-bar">
+          <h2 class="modal-title">{{ title }}</h2>
+          <button @click.stop="close" class="modal-close-btn">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 30 30"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M8 8L22 22" stroke="white" stroke-width="2" />
+              <path d="M8 22L22 8" stroke="white" stroke-width="2" />
+            </svg>
+          </button>
+        </div>
 
-      <slot></slot>
+        <slot></slot>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -90,5 +92,18 @@ export default {
   padding: 0 10px;
   margin: 0 0 10px 0;
   color: #ffffff;
+}
+
+.modal-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.modal-leave-active {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>
