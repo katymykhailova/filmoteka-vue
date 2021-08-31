@@ -1,6 +1,11 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
 a {
   text-decoration: none;
   color: rgba(0,0,0,.87);

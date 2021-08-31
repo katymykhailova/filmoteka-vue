@@ -30,16 +30,18 @@
     </a>
   </template>
   <router-view :addMessage="addMessage"></router-view>
-  <modal ref="trailerModal">
-    <iframe
-      width="560"
-      height="315"
-      :src="'https://www.youtube.com/embed/' + idMoviesTrailer"
-      frameborder="0"
-      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-    ></iframe>
-  </modal>
+  <teleport to="#modal">
+    <modal ref="trailerModal">
+      <iframe
+        width="560"
+        height="315"
+        :src="'https://www.youtube.com/embed/' + idMoviesTrailer"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </modal>
+  </teleport>
 </template>
 
 <script>
@@ -91,9 +93,13 @@ export default {
 
   methods: {
     async trailer() {
-      this.idMoviesTrailer = await fetchTrailerMovie(this.movie.id);
-      if (this.idMoviesTrailer) {
-        this.$refs.trailerModal.open();
+      try {
+        this.idMoviesTrailer = await fetchTrailerMovie(this.movie.id);
+        if (this.idMoviesTrailer) {
+          this.$refs.trailerModal.open();
+        }
+      } catch (error) {
+        this.addMessage(error.message);
       }
     },
 
