@@ -1,7 +1,7 @@
 <template>
   <movie-details v-if="movie" :movie="movie">
-    <template #trailerBtn>
-      <button-trailer @click="trailer">
+    <template #trailerBtn="{ movie = {} }">
+      <button-trailer :movie="movie" @click="trailer(movie.id)">
         <svg
           class="trailer-svg"
           version="1.1"
@@ -30,7 +30,7 @@
     </a>
   </template>
   <router-view :addMessage="addMessage"></router-view>
-  <teleport to="#modal">
+  <teleport v-if="movie" to="#modal">
     <modal :title="movie.original_title" ref="trailerModal">
       <iframe
         width="560"
@@ -92,9 +92,9 @@ export default {
   },
 
   methods: {
-    async trailer() {
+    async trailer(id) {
       try {
-        this.idMoviesTrailer = await fetchTrailerMovie(this.movie.id);
+        this.idMoviesTrailer = await fetchTrailerMovie(id);
         if (this.idMoviesTrailer) {
           this.$refs.trailerModal.open();
         }

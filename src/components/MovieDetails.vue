@@ -1,6 +1,6 @@
 <template>
   <div class="section-movie">
-    <slot name="trailerBtn"></slot>
+    <slot name="trailerBtn" :movie="movie"></slot>
     <img
       class="movie-details-img"
       :src="movie.poster_path"

@@ -7,6 +7,9 @@
 <script>
 export default {
   name: 'ButtonTrailer',
+  props: {
+    movie: { type: Object, required: true },
+  },
 
   emits: ['trailer-click'],
   methods: {

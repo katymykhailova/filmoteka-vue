@@ -15,12 +15,18 @@ export const fetchTrailerMovie = async id => {
   return sourseId;
 };
 
-export const fetchTrendingMovies = async page => {
+export const fetchTrendingMovies = async () => {
+  const response = await axios.get(`/trending/movie/day?api_key=${API_KEY}`);
+  const trandingMoviesData = await response.data;
+  return trandingMoviesData;
+};
+
+export const fetchPopularMovies = async page => {
   const response = await axios.get(
     `/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`,
   );
-  const trendinMoviesData = await response.data;
-  return trendinMoviesData;
+  const popularMoviesData = await response.data;
+  return popularMoviesData;
 };
 
 export const fetchMoviesSearchQuery = async (searchQuery, page) => {
