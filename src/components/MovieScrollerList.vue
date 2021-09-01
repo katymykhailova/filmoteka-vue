@@ -54,10 +54,15 @@ export default {
   height: 200px;
   object-fit: cover;
   padding: 0;
+  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .movie-scroll-item:not(:last-child) {
   margin-right: 10px;
 }
+.movie-scroll-item:hover {
+  transform: scale(0.95);
+}
+
 .movie-scroll-img {
   width: 150px;
   height: 100%;
