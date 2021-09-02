@@ -1,34 +1,37 @@
 <template>
-  <movie-details v-if="movie" :movie="movie">
-    <template #trailerBtn="{ movie = {} }">
-      <button-trailer :movie="movie" @click="trailer(movie.id)">
-        <svg
-          class="trailer-svg"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 32 32"
-        >
-          <path
-            d="M30.662 5.003c-4.488-0.645-9.448-1.003-14.662-1.003s-10.174 0.358-14.662 1.003c-0.86 3.366-1.338 7.086-1.338 10.997s0.477 7.63 1.338 10.997c4.489 0.645 9.448 1.003 14.662 1.003s10.174-0.358 14.662-1.003c0.86-3.366 1.338-7.086 1.338-10.997s-0.477-7.63-1.338-10.997zM12 22v-12l10 6-10 6z"
-          ></path>
-        </svg>
-      </button-trailer>
+  <section class="container">
+    <movie-details v-if="movie" :movie="movie">
+      <template #trailerBtn="{ movie = {} }">
+        <button-trailer :movie="movie" @click="trailer(movie.id)">
+          <svg
+            class="trailer-svg"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+          >
+            <path
+              d="M30.662 5.003c-4.488-0.645-9.448-1.003-14.662-1.003s-10.174 0.358-14.662 1.003c-0.86 3.366-1.338 7.086-1.338 10.997s0.477 7.63 1.338 10.997c4.489 0.645 9.448 1.003 14.662 1.003s10.174-0.358 14.662-1.003c0.86-3.366 1.338-7.086 1.338-10.997s-0.477-7.63-1.338-10.997zM12 22v-12l10 6-10 6z"
+            ></path>
+          </svg>
+        </button-trailer>
+      </template>
+    </movie-details>
+  </section>
+  <section class="container">
+    <template v-if="reqStatus === 'resolved'">
+      <router-link :to="{ name: 'Cast' }" class="movie-details-link"
+        >Cast
+      </router-link>
+      <router-link :to="{ name: 'Reviews' }" class="movie-details-link"
+        >Reviews
+      </router-link>
+      <a @click.stop="onWatchedClick" class="movie-details-link">
+        {{ addedMovie ? 'Remove from watched' : 'Add to watched' }}
+      </a>
     </template>
-  </movie-details>
-
-  <template v-if="reqStatus === 'resolved'">
-    <router-link :to="{ name: 'Cast' }" class="movie-details-link"
-      >Cast
-    </router-link>
-    <router-link :to="{ name: 'Reviews' }" class="movie-details-link"
-      >Reviews
-    </router-link>
-    <a @click.stop="onWatchedClick" class="movie-details-link">
-      {{ addedMovie ? 'Remove from watched' : 'Add to watched' }}
-    </a>
-  </template>
+  </section>
   <router-view :addMessage="addMessage"></router-view>
   <teleport v-if="movie" to="#modal">
     <modal :title="movie.original_title" ref="trailerModal">

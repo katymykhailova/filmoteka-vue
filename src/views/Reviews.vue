@@ -1,5 +1,7 @@
 <template>
-  <reviews-movie v-if="reviews" :reviews="reviews" :reqStatus="reqStatus" />
+  <section class="container">
+    <reviews-movie v-if="reviews" :reviews="reviews" :reqStatus="reqStatus" />
+  </section>
 </template>
 
 <script>

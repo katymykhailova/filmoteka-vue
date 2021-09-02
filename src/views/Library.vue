@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="container">
     <search-form v-model:searchText="searchQuery" @handle-submit="onSeach" />
     <movie-list :movies="filteredMovies">
       <template #movie="{ movie = {} }">
@@ -7,14 +7,16 @@
       </template>
     </movie-list>
   </section>
-  <paginator
-    v-if="movies.length >= rows"
-    v-model:first="first"
-    :rows="rows"
-    :totalRecords="totalRecords"
-    :currentPage="currentPage"
-    @page="onPage($event)"
-  />
+  <section class="container">
+    <paginator
+      v-if="movies.length >= rows"
+      v-model:first="first"
+      :rows="rows"
+      :totalRecords="totalRecords"
+      :currentPage="currentPage"
+      @page="onPage($event)"
+    />
+  </section>
 </template>
 
 <script>

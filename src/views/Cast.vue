@@ -1,5 +1,7 @@
 <template>
-  <cast-movie v-if="credits" :credits="credits" :reqStatus="reqStatus" />
+  <section class="container">
+    <cast-movie v-if="credits" :credits="credits" :reqStatus="reqStatus" />
+  </section>
 </template>
 
 <script>

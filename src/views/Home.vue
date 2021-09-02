@@ -1,6 +1,26 @@
 <template>
   <loader :loading="reqStatus === 'pending'" />
-  <section v-if="reqStatus === 'resolved'">
+
+  <section v-if="tranding" class="container">
+    <div class="movie-scroll-title">
+      <h2 class="section-title">Trending</h2>
+      <div class="trending-switch">
+        <span class="box-switch" :style="styleSwitch"></span>
+        <a
+          @click.prevent="toglleTrendingScroller('day')"
+          href="#"
+          class="movie-scroll-link"
+          >Today</a
+        >
+        <a
+          @click.prevent="toglleTrendingScroller('week')"
+          href="#"
+          class="movie-scroll-link"
+          >This Week</a
+        >
+      </div>
+    </div>
+
     <movie-scroller-list :movies="tranding">
       <template #trailerBtn="{ movie = {} }">
         <button-trailer :movie="movie" @click="trailer(movie)">
@@ -23,20 +43,25 @@
         <movie-scroller-card :movie="movie"></movie-scroller-card>
       </template>
     </movie-scroller-list>
+  </section>
+  <section v-if="reqStatus === 'resolved'" class="container">
+    <h2 class="section-title">What's Popular</h2>
     <movie-list :movies="movies">
       <template #movie="{ movie = {} }">
         <movie-card :movie="movie" />
       </template>
     </movie-list>
   </section>
-  <paginator
-    v-if="movies.length > 19"
-    v-model:first="first"
-    :rows="rows"
-    :totalRecords="totalRecords"
-    :currentPage="currentPage"
-    @page="onPage($event)"
-  />
+  <section class="container">
+    <paginator
+      v-if="movies.length > 19"
+      v-model:first="first"
+      :rows="rows"
+      :totalRecords="totalRecords"
+      :currentPage="currentPage"
+      @page="onPage($event)"
+    />
+  </section>
   <teleport v-if="currentMovie" to="#modal">
     <modal :title="currentMovie.original_title" ref="trailerModal">
       <iframe
@@ -92,6 +117,8 @@ export default {
       input: 1,
       currentMovie: null,
       idMoviesTrailer: null,
+      timeTrending: 'day',
+      styleSwitch: { left: '-1px', width: '50px' },
     };
   },
 
@@ -125,6 +152,18 @@ export default {
       });
     },
 
+    toglleTrendingScroller(time) {
+      this.timeTrending = time;
+      if (this.timeTrending === 'day') {
+        this.styleSwitch = {
+          left: '-1px',
+          width: '50px',
+        };
+      } else {
+        this.styleSwitch = { transform: 'translateX(44px)', width: '70px' };
+      }
+    },
+
     async trailer(movie) {
       try {
         this.currentMovie = movie;
@@ -139,13 +178,10 @@ export default {
 
     async fetchTrendingMovies() {
       try {
-        this.reqStatus = 'pending';
-        const trandingMoviesData = await fetchTrendingMovies();
+        const trandingMoviesData = await fetchTrendingMovies(this.timeTrending);
         const trandingMovies = await trandingMoviesData.results;
         this.tranding = await fetchNormalizer(trandingMovies);
-        this.reqStatus = 'resolved';
       } catch (error) {
-        this.reqStatus = 'rejected';
         this.addMessage(error);
       }
     },
@@ -172,6 +208,10 @@ export default {
       this.first = (Number(page) - 1) * this.rows;
       this.fetchPopularMovies();
       this.scrollTo();
+    },
+
+    timeTrending() {
+      this.fetchTrendingMovies();
     },
   },
 };

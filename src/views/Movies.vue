@@ -1,7 +1,7 @@
 <template>
   <loader :loading="reqStatus === 'pending'" />
   <template v-if="showMovies">
-    <section>
+    <section class="container">
       <search-form v-model:searchText="searchQuery" @handle-submit="onSeach" />
       <movie-list :movies="movies">
         <template #movie="{ movie = {} }">
@@ -9,14 +9,17 @@
         </template>
       </movie-list>
     </section>
-    <paginator
-      v-if="movies.length > 19"
-      v-model:first="first"
-      :rows="rows"
-      :totalRecords="totalRecords"
-      :currentPage="currentPage"
-      @page="onPage($event)"
-  /></template>
+    <section class="container">
+      <paginator
+        v-if="movies.length > 19"
+        v-model:first="first"
+        :rows="rows"
+        :totalRecords="totalRecords"
+        :currentPage="currentPage"
+        @page="onPage($event)"
+      />
+    </section>
+  </template>
   <router-view :addMessage="addMessage"></router-view>
 </template>
 

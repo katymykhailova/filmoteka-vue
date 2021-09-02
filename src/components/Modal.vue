@@ -96,7 +96,7 @@ export default {
 }
 
 .modal-enter-active {
-  transition: all 0.3s ease-out;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-leave-active {

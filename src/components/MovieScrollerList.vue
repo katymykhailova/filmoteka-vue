@@ -1,11 +1,12 @@
 <template>
   <section class="movie-scroll-section">
-    <ul class="movie-scroll-list">
+    <!-- <transition-group name="tranding"> -->
+    <transition-group name="tranding" tag="ul" class="movie-scroll-list">
       <li class="movie-scroll-item" v-for="movie in movies" :key="movie.id">
         <slot name="trailerBtn" :movie="movie"></slot>
         <slot name="scrollCard" :movie="movie"></slot>
       </li>
-    </ul>
+    </transition-group>
   </section>
 </template>
 
@@ -18,6 +19,44 @@ export default {
 };
 </script>
 <style>
+.trending-switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 120px;
+  height: 25px;
+  padding: 5px;
+  border: 1px solid #f59210;
+  border-radius: 30px;
+}
+
+.box-switch {
+  position: absolute;
+  z-index: -1;
+  top: -1px;
+  box-sizing: border-box;
+  content: '';
+  height: 25px;
+  padding: 5px;
+  border: 1px solid #f59210;
+  border-radius: 30px;
+  background-color: #f59210;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-scroll-title {
+  align-items: baseline;
+  display: flex;
+}
+
+.movie-scroll-link {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .movie-scroll-section {
   height: 200px;
   width: 100%;
@@ -47,6 +86,7 @@ export default {
   padding: 0;
   margin: 0;
 }
+
 .movie-scroll-item {
   position: relative;
   list-style: none;
@@ -54,7 +94,7 @@ export default {
   height: 200px;
   object-fit: cover;
   padding: 0;
-  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 800ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .movie-scroll-item:not(:last-child) {
   margin-right: 10px;
@@ -67,5 +107,16 @@ export default {
   width: 150px;
   height: 100%;
   object-fit: cover;
+}
+
+.tranding-enter-active,
+.tranding-leave-active {
+  transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tranding-enter-from,
+.tranding-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>
