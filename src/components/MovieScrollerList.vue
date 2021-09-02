@@ -60,7 +60,7 @@ export default {
 .movie-scroll-section {
   height: 200px;
   width: 100%;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
   overflow-x: scroll;
   overflow-y: hidden;
   scrollbar-color: #6969dd #e0e0e0;
