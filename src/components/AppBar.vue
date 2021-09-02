@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <div class="container">
+    <div class="nav-container">
       <slot name="nav"> </slot>
     </div>
   </header>

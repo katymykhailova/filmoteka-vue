@@ -19,8 +19,11 @@ button:disabled{cursor: auto;}
     width: 1300px;
     margin: 0 auto 30px;
   }
+  .nav-container{
+    width: 1300px;
+    margin: 0 auto;
+  }
 }
-
 
 
 .section-title{
